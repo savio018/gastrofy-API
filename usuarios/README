@@ -1,0 +1,124 @@
+# 👤 Módulo de Usuários
+
+Este módulo é responsável pelo gerenciamento de contas e autenticação dentro do sistema Gastrofy.
+
+Ele implementa todas as funcionalidades necessárias para controle de acesso e segurança da aplicação.
+
+## Funcionalidades implementadas
+
+O módulo de usuários possui:
+
+- cadastro de usuário
+- autenticação com JWT
+- verificação de email
+- recuperação de senha
+- paginação de usuários
+- validação de dados
+- criptografia de senha
+
+## 🔐 Autenticação com JWT
+
+O sistema utiliza **JSON Web Token (JWT)** para autenticação.
+
+Fluxo de autenticação:
+
+1. Usuário realiza login
+2. O servidor gera um token JWT
+3. O cliente envia esse token nas requisições
+4. A API valida o token antes de liberar acesso
+
+Exemplo de header de autenticação:
+# 👤 Módulo de Usuários
+
+Este módulo é responsável pelo gerenciamento de contas e autenticação dentro do sistema Gastrofy.
+
+Ele implementa todas as funcionalidades necessárias para controle de acesso e segurança da aplicação.
+
+## Funcionalidades implementadas
+
+O módulo de usuários possui:
+
+- cadastro de usuário
+- autenticação com JWT
+- verificação de email
+- recuperação de senha
+- paginação de usuários
+- validação de dados
+- criptografia de senha
+
+## 🔐 Autenticação com JWT
+
+O sistema utiliza **JSON Web Token (JWT)** para autenticação.
+
+Fluxo de autenticação:
+
+1. Usuário realiza login
+2. O servidor gera um token JWT
+3. O cliente envia esse token nas requisições
+4. A API valida o token antes de liberar acesso
+
+Exemplo de header de autenticação:
+Authorization: Bearer TOKEN
+
+
+## 📧 Verificação de email
+
+Após o cadastro, o usuário precisa verificar seu email.
+
+Fluxo:
+
+Cadastro → geração de token → verificação de email → conta ativada
+
+Endpoint:
+
+
+POST /auth/verify-email?token=TOKEN
+
+
+## 🔁 Recuperação de senha
+
+O sistema permite que o usuário redefina sua senha caso esqueça.
+
+Fluxo:
+
+
+POST /auth/forgot-password
+↓
+geração de token de recuperação
+↓
+POST /auth/reset-password
+↓
+senha atualizada
+
+
+## 📄 Paginação
+
+A listagem de usuários suporta paginação para evitar retornos muito grandes de dados.
+
+Exemplo:
+
+
+GET /usuarios?page=0&size=5
+
+
+Resposta:
+
+
+content
+totalElements
+totalPages
+size
+number
+
+
+## 🧪 Testes
+
+As funcionalidades foram testadas utilizando **Postman**, validando:
+
+- cadastro de usuários
+- validação de campos
+- verificação de email
+- login
+- autenticação JWT
+- recuperação de senha
+- paginação
