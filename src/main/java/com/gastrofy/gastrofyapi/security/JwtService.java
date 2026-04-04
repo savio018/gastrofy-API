@@ -7,8 +7,8 @@ import io.jsonwebtoken.security.Keys;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
+import java.time.Instant;
 import java.security.Key;
-import java.util.Date;
 import java.util.function.Function;
 
 @Service
@@ -26,13 +26,13 @@ public class JwtService {
     }
 
     public String gerarToken(String email) {
-        Date now = new Date();
-        Date expiryDate = new Date(now.getTime() + expirationMillis);
+        Instant now = Instant.now();
+        Instant expiryDate = now.plusMillis(expirationMillis);
 
         return Jwts.builder()
                 .setSubject(email)
-                .setIssuedAt(now)
-                .setExpiration(expiryDate)
+                .setIssuedAt(java.util.Date.from(now))
+                .setExpiration(java.util.Date.from(expiryDate))
                 .signWith(signingKey, SignatureAlgorithm.HS256)
                 .compact();
     }
@@ -47,8 +47,8 @@ public class JwtService {
     }
 
     private boolean estaExpirado(String token) {
-        Date expiration = extrairClaim(token, Claims::getExpiration);
-        return expiration.before(new Date());
+        Instant expiration = extrairClaim(token, Claims::getExpiration).toInstant();
+        return expiration.isBefore(Instant.now());
     }
 
     private <T> T extrairClaim(String token, Function<Claims, T> claimsResolver) {

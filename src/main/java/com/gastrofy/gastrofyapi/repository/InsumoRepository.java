@@ -9,10 +9,10 @@ import java.util.Optional;
 
 @Repository
 
-public interface InsumoRepository extends JpaRepository<Insumo, Integer> {
+public interface InsumoRepository extends JpaRepository<Insumo, Long> {
 
-    List<Insumo> findByUsuarioId(Integer usuarioId);
+    List<Insumo> findByUsuarioIdUsuario(Integer usuarioId);
 
 
-    Optional<Insumo> findByIdAndUsuarioId(Long id, Integer usuarioId);
+    Optional<Insumo> findByIdAndUsuarioIdUsuario(Long id, Integer usuarioId);
 }

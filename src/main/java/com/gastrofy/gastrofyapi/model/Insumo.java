@@ -1,11 +1,12 @@
 package com.gastrofy.gastrofyapi.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 
 import java.math.BigDecimal;
-import java.util.Date;
+import java.time.LocalDate;
 
 @Getter
 @Setter
@@ -16,13 +17,14 @@ public class Insumo {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id_insumo")
     private Long id;
 
     @Column(name = "nome_insumo")
     private String nome;
 
     @Column(name = "data_validade")
-    private Date dataValidade;
+    private LocalDate dataValidade;
 
     @Column(name = "estoque_total_consumo")
     private BigDecimal estoqueTotal;
@@ -39,8 +41,9 @@ public class Insumo {
     @Column(name = "preco_por_unidade_compra")
     private BigDecimal precoUnidadeCompra;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "usuario_id")
+    @JsonIgnore
     private Usuario usuario;
 
 

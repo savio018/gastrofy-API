@@ -4,6 +4,7 @@ import com.gastrofy.gastrofyapi.dto.ErrorResponse;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -58,6 +59,21 @@ public class GlobalExceptionHandler {
                 "Erro de validação nos campos enviados.",
                 request.getRequestURI(),
                 erros
+        );
+        return ResponseEntity.badRequest().body(response);
+    }
+
+    // 🔥 ESSE AQUI É O QUE FALTAVA (corrige o teste 15)
+    @ExceptionHandler(HttpMessageNotReadableException.class)
+    public ResponseEntity<ErrorResponse> jsonInvalido(
+            HttpMessageNotReadableException ex,
+            HttpServletRequest request) {
+
+        ErrorResponse response = new ErrorResponse(
+                HttpStatus.BAD_REQUEST.value(),
+                "Bad Request",
+                "JSON inválido ou formato de data inválido. Use o padrão yyyy-MM-dd para datas.",
+                request.getRequestURI()
         );
         return ResponseEntity.badRequest().body(response);
     }
