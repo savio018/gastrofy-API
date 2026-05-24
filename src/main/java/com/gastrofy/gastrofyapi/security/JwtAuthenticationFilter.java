@@ -8,8 +8,6 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.User;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
@@ -50,21 +48,15 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             Usuario usuario = usuarioRepository.findByEmail(email).orElse(null);
 
             if (usuario != null && jwtService.tokenValido(token, usuario.getEmail())) {
-                UserDetails userDetails = User.withUsername(usuario.getEmail())
-                        .password(usuario.getSenha())
-                        .authorities(Collections.emptyList())
-                        .build();
-
                 UsernamePasswordAuthenticationToken authentication =
                         new UsernamePasswordAuthenticationToken(
-                                userDetails,
+                                usuario,
                                 null,
-                                userDetails.getAuthorities()
+                                Collections.emptyList()
                         );
                 authentication.setDetails(
                         new WebAuthenticationDetailsSource().buildDetails(request)
                 );
-
                 SecurityContextHolder.getContext().setAuthentication(authentication);
             }
         }
@@ -72,4 +64,3 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         filterChain.doFilter(request, response);
     }
 }
-

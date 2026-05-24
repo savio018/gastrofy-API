@@ -6,6 +6,8 @@ import com.gastrofy.gastrofyapi.model.Usuario;
 import com.gastrofy.gastrofyapi.service.InsumoService;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -20,56 +22,36 @@ public class InsumoController {
         this.insumoService = insumoService;
     }
 
+    private Usuario getUsuarioAutenticado() {
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        return (Usuario) auth.getPrincipal();
+    }
+
     @PostMapping
     public ResponseEntity<InsumoResponseDTO> criar(@Valid @RequestBody InsumoRequestDTO dto) {
-
-        Usuario usuario = new Usuario();
-        usuario.setIdUsuario(1); // temporário
-
-        InsumoResponseDTO insumo = insumoService.criar(dto, usuario);
-
-        return ResponseEntity.ok(insumo);
+        return ResponseEntity.ok(insumoService.criar(dto, getUsuarioAutenticado()));
     }
 
     @GetMapping
     public ResponseEntity<List<InsumoResponseDTO>> listar() {
-
-        Usuario usuario = new Usuario();
-        usuario.setIdUsuario(1);
-
-        return ResponseEntity.ok(insumoService.listar(usuario));
+        return ResponseEntity.ok(insumoService.listar(getUsuarioAutenticado()));
     }
 
     @GetMapping("/{id}")
     public ResponseEntity<InsumoResponseDTO> buscar(@PathVariable Long id) {
-
-        Usuario usuario = new Usuario();
-        usuario.setIdUsuario(1);
-
-        return ResponseEntity.ok(insumoService.buscarPorId(id, usuario));
+        return ResponseEntity.ok(insumoService.buscarPorId(id, getUsuarioAutenticado()));
     }
 
     @PutMapping("/{id}")
     public ResponseEntity<InsumoResponseDTO> atualizar(
             @PathVariable Long id,
             @Valid @RequestBody InsumoRequestDTO dto) {
-
-        Usuario usuario = new Usuario();
-        usuario.setIdUsuario(1); // temporário
-
-        InsumoResponseDTO insumoAtualizado = insumoService.atualizar(id, dto, usuario);
-
-        return ResponseEntity.ok(insumoAtualizado);
+        return ResponseEntity.ok(insumoService.atualizar(id, dto, getUsuarioAutenticado()));
     }
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deletar(@PathVariable Long id) {
-
-        Usuario usuario = new Usuario();
-        usuario.setIdUsuario(1);
-
-        insumoService.deletar(id, usuario);
-
+        insumoService.deletar(id, getUsuarioAutenticado());
         return ResponseEntity.noContent().build();
     }
 }
