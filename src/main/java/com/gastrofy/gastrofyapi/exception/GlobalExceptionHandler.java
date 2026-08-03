@@ -63,7 +63,6 @@ public class GlobalExceptionHandler {
         return ResponseEntity.badRequest().body(response);
     }
 
-    // 🔥 ESSE AQUI É O QUE FALTAVA (corrige o teste 15)
     @ExceptionHandler(HttpMessageNotReadableException.class)
     public ResponseEntity<ErrorResponse> jsonInvalido(
             HttpMessageNotReadableException ex,

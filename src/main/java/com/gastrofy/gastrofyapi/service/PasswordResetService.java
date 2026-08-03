@@ -8,6 +8,7 @@ import com.gastrofy.gastrofyapi.repository.UsuarioRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.UUID;
@@ -22,9 +23,10 @@ public class PasswordResetService {
     private final UsuarioRepository usuarioRepository;
     private final PasswordEncoder passwordEncoder;
 
+    @Transactional
     public String gerarTokenResetSenha(String email) {
         Usuario usuario = usuarioRepository.findByEmail(email)
-                .orElseThrow(() -> new RegraNegocioException("Usuário não encontrado para o email informado"));
+                .orElseThrow(() -> new RegraNegocioException("Se o email existir, você receberá as instruções de redefinição"));
 
         tokenRepository.deleteByUsuario(usuario);
 
@@ -40,6 +42,7 @@ public class PasswordResetService {
         return token;
     }
 
+    @Transactional
     public void redefinirSenha(String token, String novaSenha) {
         PasswordResetToken resetToken = tokenRepository.findByToken(token)
                 .orElseThrow(() -> new RegraNegocioException("Token de redefinição inválido"));
@@ -56,4 +59,3 @@ public class PasswordResetService {
         tokenRepository.delete(resetToken);
     }
 }
-

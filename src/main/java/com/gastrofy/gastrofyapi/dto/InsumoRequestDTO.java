@@ -33,5 +33,9 @@ public class InsumoRequestDTO {
 
     @NotNull(message = "Preço por unidade de compra é obrigatório")
     private BigDecimal precoUnidadeCompra;
+
+    private BigDecimal estoqueMinimo;
+    private BigDecimal estoqueCritico;
+    private Integer diasAvisoValidade;
 }
 

@@ -1,6 +1,6 @@
 package com.gastrofy.gastrofyapi.model;
 
-
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
@@ -31,6 +31,7 @@ public class Receita {
     @Column(name = "custo_total", nullable = false)
     private BigDecimal custoTotal;
 
+    @JsonIgnore
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "usuario_id", nullable = false)
     private Usuario usuario;

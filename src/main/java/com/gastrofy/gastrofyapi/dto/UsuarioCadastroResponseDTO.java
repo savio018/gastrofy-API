@@ -1,5 +1,8 @@
 package com.gastrofy.gastrofyapi.dto;
 
+import lombok.Getter;
+
+@Getter
 public class UsuarioCadastroResponseDTO {
 
     private final UsuarioResponseDTO usuario;
@@ -8,14 +11,6 @@ public class UsuarioCadastroResponseDTO {
     public UsuarioCadastroResponseDTO(UsuarioResponseDTO usuario, String tokenVerificacaoEmail) {
         this.usuario = usuario;
         this.tokenVerificacaoEmail = tokenVerificacaoEmail;
-    }
-
-    public UsuarioResponseDTO getUsuario() {
-        return usuario;
-    }
-
-    public String getTokenVerificacaoEmail() {
-        return tokenVerificacaoEmail;
     }
 }
 

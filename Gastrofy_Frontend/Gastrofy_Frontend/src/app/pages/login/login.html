@@ -1,0 +1,43 @@
+<div class="auth-page">
+  <div class="auth-card">
+    <h1>Gastrofy</h1>
+    <p class="subtitle">Entre na sua conta</p>
+
+    <form (ngSubmit)="onSubmit()">
+      <div class="form-group">
+        <label for="email">Email</label>
+        <input
+          id="email"
+          name="email"
+          type="email"
+          [(ngModel)]="form.email"
+          required
+          placeholder="Digite seu email"
+        />
+      </div>
+
+      <div class="form-group">
+        <label for="senha">Senha</label>
+        <input
+          id="senha"
+          name="senha"
+          type="password"
+          [(ngModel)]="form.senha"
+          required
+          placeholder="Digite sua senha"
+        />
+      </div>
+
+      <p class="erro" *ngIf="erro">{{ erro }}</p>
+
+      <button type="submit" [disabled]="loading">
+        {{ loading ? 'Entrando...' : 'Entrar' }}
+      </button>
+    </form>
+
+    <p class="footer-text">
+      Não tem conta?
+      <a routerLink="/register">Criar cadastro</a>
+    </p>
+  </div>
+</div>

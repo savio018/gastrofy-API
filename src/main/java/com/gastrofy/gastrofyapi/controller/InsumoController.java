@@ -2,6 +2,7 @@ package com.gastrofy.gastrofyapi.controller;
 
 import com.gastrofy.gastrofyapi.dto.InsumoRequestDTO;
 import com.gastrofy.gastrofyapi.dto.InsumoResponseDTO;
+import com.gastrofy.gastrofyapi.dto.InsumoUpdateRequestDTO;
 import com.gastrofy.gastrofyapi.model.Usuario;
 import com.gastrofy.gastrofyapi.service.InsumoService;
 import jakarta.validation.Valid;
@@ -10,6 +11,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 @RestController
@@ -45,7 +47,7 @@ public class InsumoController {
     @PutMapping("/{id}")
     public ResponseEntity<InsumoResponseDTO> atualizar(
             @PathVariable Long id,
-            @Valid @RequestBody InsumoRequestDTO dto) {
+            @Valid @RequestBody InsumoUpdateRequestDTO dto) {
         return ResponseEntity.ok(insumoService.atualizar(id, dto, getUsuarioAutenticado()));
     }
 
@@ -53,5 +55,12 @@ public class InsumoController {
     public ResponseEntity<Void> deletar(@PathVariable Long id) {
         insumoService.deletar(id, getUsuarioAutenticado());
         return ResponseEntity.noContent().build();
+    }
+
+    @PatchMapping("/{id}/estoque")
+    public ResponseEntity<InsumoResponseDTO> reporEstoque(
+            @PathVariable Long id,
+            @RequestParam BigDecimal quantidade) {
+        return ResponseEntity.ok(insumoService.reporEstoque(id, quantidade, getUsuarioAutenticado()));
     }
 }

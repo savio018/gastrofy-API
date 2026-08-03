@@ -1,4 +1,7 @@
 package com.gastrofy.gastrofyapi.model;
 
-public class StatusPedido {
+public enum StatusPedido {
+    PENDENTE,
+    PRODUZIDO,
+    CANCELADO
 }

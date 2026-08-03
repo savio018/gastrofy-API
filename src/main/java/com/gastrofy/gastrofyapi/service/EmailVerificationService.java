@@ -7,6 +7,7 @@ import com.gastrofy.gastrofyapi.repository.EmailVerificationTokenRepository;
 import com.gastrofy.gastrofyapi.repository.UsuarioRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.UUID;
@@ -20,6 +21,7 @@ public class EmailVerificationService {
     private final EmailVerificationTokenRepository tokenRepository;
     private final UsuarioRepository usuarioRepository;
 
+    @Transactional
     public String criarTokenParaUsuario(Usuario usuario) {
         tokenRepository.deleteByUsuario(usuario);
 
@@ -35,6 +37,7 @@ public class EmailVerificationService {
         return token;
     }
 
+    @Transactional
     public void verificarEmail(String token) {
         EmailVerificationToken emailToken = tokenRepository.findByToken(token)
                 .orElseThrow(() -> new RegraNegocioException("Token de verificação inválido"));
@@ -51,4 +54,3 @@ public class EmailVerificationService {
         tokenRepository.delete(emailToken);
     }
 }
-

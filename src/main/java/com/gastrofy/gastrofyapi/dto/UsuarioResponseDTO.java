@@ -1,35 +1,21 @@
 package com.gastrofy.gastrofyapi.dto;
 
+import lombok.Getter;
+
 import java.time.LocalDate;
 
+@Getter
 public class UsuarioResponseDTO {
 
-    private Integer id;
-    private String nome;
-    private String email;
-    private LocalDate dataCriacao;
+    private final Integer id;
+    private final String nome;
+    private final String email;
+    private final LocalDate dataCriacao;
 
     public UsuarioResponseDTO(Integer id, String nome, String email, LocalDate dataCriacao) {
         this.id = id;
         this.nome = nome;
         this.email = email;
         this.dataCriacao = dataCriacao;
-
-    }
-
-    public Integer getId() {
-        return id;
-    }
-
-    public String getNome() {
-        return nome;
-    }
-
-    public String getEmail() {
-        return email;
-    }
-
-    public LocalDate getDataCriacao() {
-        return dataCriacao;
     }
 }

@@ -1,16 +1,12 @@
 package com.gastrofy.gastrofyapi.controller;
 
 import com.gastrofy.gastrofyapi.dto.*;
-import com.gastrofy.gastrofyapi.exception.RegraNegocioException;
-import com.gastrofy.gastrofyapi.model.Usuario;
-import com.gastrofy.gastrofyapi.repository.UsuarioRepository;
-import com.gastrofy.gastrofyapi.security.JwtService;
+import com.gastrofy.gastrofyapi.service.AuthService;
 import com.gastrofy.gastrofyapi.service.EmailVerificationService;
 import com.gastrofy.gastrofyapi.service.PasswordResetService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -18,39 +14,32 @@ import org.springframework.web.bind.annotation.*;
 @RequiredArgsConstructor
 public class AuthController {
 
-    private final UsuarioRepository usuarioRepository;
-    private final PasswordEncoder passwordEncoder;
-    private final JwtService jwtService;
+    private final AuthService authService;
     private final EmailVerificationService emailVerificationService;
     private final PasswordResetService passwordResetService;
 
+    /**
+     * POST /auth/login - Realiza login e retorna token JWT
+     */
     @PostMapping("/login")
     public ResponseEntity<LoginResponseDTO> login(
             @Valid @RequestBody LoginRequestDTO dto
     ) {
-        Usuario usuario = usuarioRepository.findByEmail(dto.getEmail())
-                .orElseThrow(() -> new RegraNegocioException("Credenciais inválidas"));
-
-        boolean senhaCorreta = passwordEncoder.matches(dto.getSenha(), usuario.getSenha());
-
-        if (!senhaCorreta) {
-            throw new RegraNegocioException("Credenciais inválidas");
-        }
-
-        if (!usuario.isEmailVerificado()) {
-            throw new RegraNegocioException("Email não verificado");
-        }
-
-        String token = jwtService.gerarToken(usuario.getEmail());
-        return ResponseEntity.ok(new LoginResponseDTO(token));
+        return ResponseEntity.ok(authService.login(dto));
     }
 
+    /**
+     * GET /auth/verify-email - Verifica email do usuário
+     */
     @GetMapping("/verify-email")
     public ResponseEntity<Void> verifyEmail(@RequestParam("token") String token) {
         emailVerificationService.verificarEmail(token);
         return ResponseEntity.noContent().build();
     }
 
+    /**
+     * POST /auth/forgot-password - Gera token para reset de senha
+     */
     @PostMapping("/forgot-password")
     public ResponseEntity<ForgotPasswordResponseDTO> forgotPassword(
             @Valid @RequestBody ForgotPasswordRequestDTO dto
@@ -59,6 +48,9 @@ public class AuthController {
         return ResponseEntity.ok(new ForgotPasswordResponseDTO(token));
     }
 
+    /**
+     * POST /auth/reset-password - Reseta a senha do usuário
+     */
     @PostMapping("/reset-password")
     public ResponseEntity<Void> resetPassword(
             @Valid @RequestBody ResetPasswordRequestDTO dto

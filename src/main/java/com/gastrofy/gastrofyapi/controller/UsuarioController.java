@@ -7,9 +7,9 @@ import com.gastrofy.gastrofyapi.model.Usuario;
 import com.gastrofy.gastrofyapi.service.UsuarioService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -22,36 +22,28 @@ public class UsuarioController {
     @PostMapping
     public ResponseEntity<UsuarioCadastroResponseDTO> cadastrar(
             @Valid @RequestBody UsuarioRequestDTO dto) {
-
-        UsuarioCadastroResponseDTO usuarioCriado = usuarioService.criar(dto);
-        return ResponseEntity.ok(usuarioCriado);
+        return ResponseEntity.ok(usuarioService.criar(dto));
     }
 
-    @GetMapping
-    public ResponseEntity<Page<UsuarioResponseDTO>> listar(Pageable pageable) {
-        return ResponseEntity.ok(usuarioService.listar(pageable));
+    @GetMapping("/me")
+    public ResponseEntity<UsuarioResponseDTO> obterPerfil() {
+        return ResponseEntity.ok(usuarioService.buscarPorId(getUsuarioAutenticado().getIdUsuario()));
     }
 
-    @GetMapping("/{id}")
-    public ResponseEntity<Usuario> buscarPorId(@PathVariable Integer id) {
-        return ResponseEntity.ok(usuarioService.buscarPorId(id));
+    @PutMapping("/me")
+    public ResponseEntity<UsuarioResponseDTO> atualizarPerfil(
+            @Valid @RequestBody UsuarioRequestDTO dto) {
+        return ResponseEntity.ok(usuarioService.atualizar(getUsuarioAutenticado().getIdUsuario(), dto));
     }
 
-    @PutMapping("/{id}")
-    public ResponseEntity<Usuario> atualizar(
-            @PathVariable Integer id,
-            @RequestBody Usuario usuario) {
-
-        return ResponseEntity.ok(usuarioService.atualizar(id, usuario));
-    }
-
-    @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deletar(@PathVariable Integer id) {
-        usuarioService.deletar(id);
+    @DeleteMapping("/me")
+    public ResponseEntity<Void> deletarConta() {
+        usuarioService.deletar(getUsuarioAutenticado().getIdUsuario());
         return ResponseEntity.noContent().build();
     }
-    @GetMapping("/teste")
-    public String teste() {
-        return "API funcionando";
+
+    private Usuario getUsuarioAutenticado() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        return (Usuario) authentication.getPrincipal();
     }
 }

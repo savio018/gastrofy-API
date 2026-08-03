@@ -18,5 +18,8 @@ public class InsumoResponseDTO {
     private String unidadeCompra;
     private BigDecimal conteudoUnidadeCompra;
     private BigDecimal precoUnidadeCompra;
+    private BigDecimal estoqueMinimo;
+    private BigDecimal estoqueCritico;
+    private Integer diasAvisoValidade;
 }
 

@@ -1,0 +1,195 @@
+.auth-page {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #f5efe6;
+  padding: 24px;
+}
+
+.auth-card {
+  width: 100%;
+  max-width: 460px;
+  background: #ffffff;
+  border-radius: 18px;
+  padding: 32px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+}
+
+h1 {
+  margin: 0 0 8px;
+  color: #4b2e2b;
+  font-size: 32px;
+}
+
+.subtitle {
+  margin: 0 0 24px;
+  color: #6a5b57;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 16px;
+}
+
+label {
+  margin-bottom: 6px;
+  font-weight: 600;
+  color: #4b2e2b;
+}
+
+input {
+  padding: 12px 14px;
+  border: 1px solid #d9d1c7;
+  border-radius: 10px;
+  font-size: 14px;
+}
+
+input:focus {
+  outline: none;
+  border-color: #7b2d26;
+}
+
+button {
+  width: 100%;
+  margin-top: 8px;
+  padding: 12px;
+  border: none;
+  border-radius: 10px;
+  background: #4b2e2b;
+  color: white;
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+button:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+}
+
+.secondary-button {
+  background: #eadfd2;
+  color: #4b2e2b;
+}
+
+.erro {
+  color: #b42318;
+  margin: 8px 0 0;
+}
+
+.sucesso {
+  color: #027a48;
+  margin: 8px 0 0;
+}
+
+.token-box {
+  margin-top: 16px;
+  padding: 16px;
+  background: #f8f3ed;
+  border: 1px solid #e4d8ca;
+  border-radius: 12px;
+}
+
+.footer-text {
+  margin-top: 18px;
+  text-align: center;
+}.auth-page {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #f5efe6;
+  padding: 24px;
+}
+
+.auth-card {
+  width: 100%;
+  max-width: 460px;
+  background: #ffffff;
+  border-radius: 18px;
+  padding: 32px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+}
+
+h1 {
+  margin: 0 0 8px;
+  color: #4b2e2b;
+  font-size: 32px;
+}
+
+.subtitle {
+  margin: 0 0 24px;
+  color: #6a5b57;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 16px;
+}
+
+label {
+  margin-bottom: 6px;
+  font-weight: 600;
+  color: #4b2e2b;
+}
+
+input {
+  padding: 12px 14px;
+  border: 1px solid #d9d1c7;
+  border-radius: 10px;
+  font-size: 14px;
+}
+
+input:focus {
+  outline: none;
+  border-color: #7b2d26;
+}
+
+button {
+  width: 100%;
+  margin-top: 8px;
+  padding: 12px;
+  border: none;
+  border-radius: 10px;
+  background: #4b2e2b;
+  color: white;
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+button:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+}
+
+.secondary-button {
+  background: #eadfd2;
+  color: #4b2e2b;
+}
+
+.erro {
+  color: #b42318;
+  margin: 8px 0 0;
+}
+
+.sucesso {
+  color: #027a48;
+  margin: 8px 0 0;
+}
+
+.token-box {
+  margin-top: 16px;
+  padding: 16px;
+  background: #f8f3ed;
+  border: 1px solid #e4d8ca;
+  border-radius: 12px;
+}
+
+.footer-text {
+  margin-top: 18px;
+  text-align: center;
+}

@@ -2,7 +2,9 @@ package com.gastrofy.gastrofyapi.service;
 
 import com.gastrofy.gastrofyapi.dto.InsumoRequestDTO;
 import com.gastrofy.gastrofyapi.dto.InsumoResponseDTO;
+import com.gastrofy.gastrofyapi.dto.InsumoUpdateRequestDTO;
 import com.gastrofy.gastrofyapi.exception.RecursoNaoEncontradoException;
+import com.gastrofy.gastrofyapi.exception.RegraNegocioException;
 import com.gastrofy.gastrofyapi.model.Insumo;
 import com.gastrofy.gastrofyapi.model.Usuario;
 import com.gastrofy.gastrofyapi.repository.InsumoRepository;
@@ -13,7 +15,6 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
-
 public class InsumoService {
 
     private final InsumoRepository insumoRepository;
@@ -30,9 +31,11 @@ public class InsumoService {
         insumo.setConteudoUnidadeCompra(dto.getConteudoUnidadeCompra());
         insumo.setPrecoUnidadeCompra(dto.getPrecoUnidadeCompra());
         insumo.setDataValidade(dto.getDataValidade());
+        insumo.setEstoqueMinimo(dto.getEstoqueMinimo());
+        insumo.setEstoqueCritico(dto.getEstoqueCritico());
+        insumo.setDiasAvisoValidade(dto.getDiasAvisoValidade());
 
         BigDecimal estoqueCalculado = dto.getQuantidadeCompra().multiply(dto.getConteudoUnidadeCompra());
-
         insumo.setEstoqueTotal(estoqueCalculado);
         insumo.setUsuario(usuario);
 
@@ -47,13 +50,29 @@ public class InsumoService {
                 .collect(Collectors.toList());
     }
 
+    public InsumoResponseDTO reporEstoque(Long id, BigDecimal quantidade, Usuario usuario) {
+        Insumo insumo = insumoRepository.findByIdAndUsuarioIdUsuario(id, usuario.getIdUsuario())
+                .orElseThrow(() -> new RecursoNaoEncontradoException("Insumo", id));
+
+        BigDecimal novoEstoque = insumo.getEstoqueTotal().add(quantidade);
+
+        if (novoEstoque.compareTo(BigDecimal.ZERO) < 0) {
+            throw new RegraNegocioException("Estoque não pode ficar negativo. Estoque atual: "
+                    + insumo.getEstoqueTotal() + " " + insumo.getUnidadeConsumo());
+        }
+
+        insumo.setEstoqueTotal(novoEstoque);
+        Insumo atualizado = insumoRepository.save(insumo);
+        return converterParaResponseDTO(atualizado);
+    }
+
     public InsumoResponseDTO buscarPorId(Long id, Usuario usuario) {
         Insumo insumo = insumoRepository.findByIdAndUsuarioIdUsuario(id, usuario.getIdUsuario())
                 .orElseThrow(() -> new RecursoNaoEncontradoException("Insumo", id));
         return converterParaResponseDTO(insumo);
     }
 
-    public InsumoResponseDTO atualizar(Long id, InsumoRequestDTO dto, Usuario usuario) {
+    public InsumoResponseDTO atualizar(Long id, InsumoUpdateRequestDTO dto, Usuario usuario) {
         Insumo insumo = insumoRepository.findByIdAndUsuarioIdUsuario(id, usuario.getIdUsuario())
                 .orElseThrow(() -> new RecursoNaoEncontradoException("Insumo", id));
 
@@ -63,9 +82,9 @@ public class InsumoService {
         insumo.setConteudoUnidadeCompra(dto.getConteudoUnidadeCompra());
         insumo.setPrecoUnidadeCompra(dto.getPrecoUnidadeCompra());
         insumo.setDataValidade(dto.getDataValidade());
-
-        BigDecimal estoqueCalculado = dto.getQuantidadeCompra().multiply(dto.getConteudoUnidadeCompra());
-        insumo.setEstoqueTotal(estoqueCalculado);
+        insumo.setEstoqueMinimo(dto.getEstoqueMinimo());
+        insumo.setEstoqueCritico(dto.getEstoqueCritico());
+        insumo.setDiasAvisoValidade(dto.getDiasAvisoValidade());
 
         Insumo atualizado = insumoRepository.save(insumo);
         return converterParaResponseDTO(atualizado);
@@ -87,7 +106,9 @@ public class InsumoService {
         dto.setUnidadeCompra(insumo.getUnidadeCompra());
         dto.setConteudoUnidadeCompra(insumo.getConteudoUnidadeCompra());
         dto.setPrecoUnidadeCompra(insumo.getPrecoUnidadeCompra());
+        dto.setEstoqueMinimo(insumo.getEstoqueMinimo());
+        dto.setEstoqueCritico(insumo.getEstoqueCritico());
+        dto.setDiasAvisoValidade(insumo.getDiasAvisoValidade());
         return dto;
     }
-
 }
