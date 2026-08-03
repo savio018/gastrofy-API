@@ -1,6 +1,6 @@
-spring.datasource.url=jdbc:mysql://localhost:3306/confeitaria_db
-spring.datasource.username=root
-spring.datasource.password=NovaSenhaForte2026!
+spring.datasource.url=jdbc:mysql://localhost:3306/seu_banco
+spring.datasource.username=seu_usuario
+spring.datasource.password=sua_senha
 
 spring.datasource.driver-class-name=com.mysql.cj.jdbc.Driver
 
@@ -9,7 +9,7 @@ spring.jpa.show-sql=true
 spring.jpa.properties.hibernate.format_sql=true
 spring.jpa.open-in-view=false
 
-jwt.secret=sua_chave_secreta_aqui
+jwt.secret=sua_chave_secreta_aqui_minimo_32_caracteres
 jwt.expiration=604800000
 
 spring.profiles.active=dev
