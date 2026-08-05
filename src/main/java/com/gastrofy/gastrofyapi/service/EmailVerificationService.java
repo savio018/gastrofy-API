@@ -20,9 +20,10 @@ public class EmailVerificationService {
 
     private final EmailVerificationTokenRepository tokenRepository;
     private final UsuarioRepository usuarioRepository;
+    private final EmailService emailService;
 
     @Transactional
-    public String criarTokenParaUsuario(Usuario usuario) {
+    public void criarTokenParaUsuario(Usuario usuario) {
         tokenRepository.deleteByUsuario(usuario);
 
         String token = UUID.randomUUID().toString();
@@ -34,7 +35,7 @@ public class EmailVerificationService {
 
         tokenRepository.save(emailToken);
 
-        return token;
+        emailService.enviarVerificacaoEmail(usuario.getEmail(), token);
     }
 
     @Transactional

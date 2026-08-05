@@ -12,6 +12,7 @@ import com.gastrofy.gastrofyapi.model.Usuario;
 import com.gastrofy.gastrofyapi.repository.InsumoRepository;
 import com.gastrofy.gastrofyapi.repository.ReceitaRepository;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
@@ -29,6 +30,7 @@ public class ReceitaService {
         this.insumoRepository = insumoRepository;
     }
 
+    @Transactional
     public ReceitaResponseDTO criar(ReceitaRequestDTO dto, Usuario usuario) {
         Receita receita = new Receita();
         receita.setNome(dto.getNome());
@@ -46,6 +48,7 @@ public class ReceitaService {
         return converterParaResponseDTO(salvo);
     }
 
+    @Transactional
     public List<ReceitaResponseDTO> listar(Usuario usuario) {
         return receitaRepository.findByUsuarioIdUsuario(usuario.getIdUsuario())
                 .stream()
@@ -53,12 +56,14 @@ public class ReceitaService {
                 .collect(Collectors.toList());
     }
 
+    @Transactional
     public ReceitaResponseDTO buscarPorId(Long id, Usuario usuario) {
         Receita receita = receitaRepository.findByIdAndUsuarioIdUsuario(id, usuario.getIdUsuario())
                 .orElseThrow(() -> new RecursoNaoEncontradoException("Receita", id));
         return converterParaResponseDTO(receita);
     }
 
+    @Transactional
     public ReceitaResponseDTO atualizar(Long id, ReceitaRequestDTO dto, Usuario usuario) {
         Receita receita = receitaRepository.findByIdAndUsuarioIdUsuario(id, usuario.getIdUsuario())
                 .orElseThrow(() -> new RecursoNaoEncontradoException("Receita", id));
@@ -78,6 +83,7 @@ public class ReceitaService {
         return converterParaResponseDTO(atualizado);
     }
 
+    @Transactional
     public void deletar(Long id, Usuario usuario) {
         Receita receita = receitaRepository.findByIdAndUsuarioIdUsuario(id, usuario.getIdUsuario())
                 .orElseThrow(() -> new RecursoNaoEncontradoException("Receita", id));

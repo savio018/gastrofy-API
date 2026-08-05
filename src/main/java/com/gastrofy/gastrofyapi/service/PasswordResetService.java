@@ -22,11 +22,14 @@ public class PasswordResetService {
     private final PasswordResetTokenRepository tokenRepository;
     private final UsuarioRepository usuarioRepository;
     private final PasswordEncoder passwordEncoder;
+    private final EmailService emailService;
 
     @Transactional
-    public String gerarTokenResetSenha(String email) {
+    public void gerarTokenResetSenha(String email) {
         Usuario usuario = usuarioRepository.findByEmail(email)
-                .orElseThrow(() -> new RegraNegocioException("Se o email existir, você receberá as instruções de redefinição"));
+                .orElse(null);
+
+        if (usuario == null) return;
 
         tokenRepository.deleteByUsuario(usuario);
 
@@ -39,7 +42,7 @@ public class PasswordResetService {
 
         tokenRepository.save(resetToken);
 
-        return token;
+        emailService.enviarResetSenha(email, token);
     }
 
     @Transactional

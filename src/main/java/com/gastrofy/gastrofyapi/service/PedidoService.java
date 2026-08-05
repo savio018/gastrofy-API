@@ -11,6 +11,7 @@ import com.gastrofy.gastrofyapi.repository.ClienteRepository;
 import com.gastrofy.gastrofyapi.repository.PedidoRepository;
 import com.gastrofy.gastrofyapi.repository.ProdutoRepository;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
@@ -30,6 +31,7 @@ public class PedidoService {
         this.clienteRepository = clienteRepository;
     }
 
+    @Transactional
     public PedidoResponseDTO criar(PedidoRequestDTO dto, Usuario usuario) {
         Cliente cliente = clienteRepository.findByIdAndUsuarioIdUsuario(dto.getClienteId(), usuario.getIdUsuario())
                 .orElseThrow(() -> new RecursoNaoEncontradoException("Cliente", dto.getClienteId()));
@@ -51,6 +53,7 @@ public class PedidoService {
         return converterParaResponseDTO(salvo);
     }
 
+    @Transactional
     public List<PedidoResponseDTO> listar(Usuario usuario) {
         return pedidoRepository.findByUsuarioIdUsuario(usuario.getIdUsuario())
                 .stream()
@@ -58,12 +61,14 @@ public class PedidoService {
                 .collect(Collectors.toList());
     }
 
+    @Transactional
     public PedidoResponseDTO buscarPorId(Long id, Usuario usuario) {
         Pedido pedido = pedidoRepository.findByIdAndUsuarioIdUsuario(id, usuario.getIdUsuario())
                 .orElseThrow(() -> new RecursoNaoEncontradoException("Pedido", id));
         return converterParaResponseDTO(pedido);
     }
 
+    @Transactional
     public PedidoResponseDTO produzir(Long id, Usuario usuario) {
         Pedido pedido = pedidoRepository.findByIdAndUsuarioIdUsuario(id, usuario.getIdUsuario())
                 .orElseThrow(() -> new RecursoNaoEncontradoException("Pedido", id));
@@ -77,6 +82,7 @@ public class PedidoService {
         return converterParaResponseDTO(atualizado);
     }
 
+    @Transactional
     public PedidoResponseDTO cancelar(Long id, Usuario usuario) {
         Pedido pedido = pedidoRepository.findByIdAndUsuarioIdUsuario(id, usuario.getIdUsuario())
                 .orElseThrow(() -> new RecursoNaoEncontradoException("Pedido", id));
@@ -90,6 +96,7 @@ public class PedidoService {
         return converterParaResponseDTO(atualizado);
     }
 
+    @Transactional
     public void deletar(Long id, Usuario usuario) {
         Pedido pedido = pedidoRepository.findByIdAndUsuarioIdUsuario(id, usuario.getIdUsuario())
                 .orElseThrow(() -> new RecursoNaoEncontradoException("Pedido", id));

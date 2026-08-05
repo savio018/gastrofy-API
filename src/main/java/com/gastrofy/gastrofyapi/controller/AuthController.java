@@ -18,45 +18,29 @@ public class AuthController {
     private final EmailVerificationService emailVerificationService;
     private final PasswordResetService passwordResetService;
 
-    /**
-     * POST /auth/login - Realiza login e retorna token JWT
-     */
     @PostMapping("/login")
     public ResponseEntity<LoginResponseDTO> login(
-            @Valid @RequestBody LoginRequestDTO dto
-    ) {
+            @Valid @RequestBody LoginRequestDTO dto) {
         return ResponseEntity.ok(authService.login(dto));
     }
 
-    /**
-     * GET /auth/verify-email - Verifica email do usuário
-     */
     @GetMapping("/verify-email")
     public ResponseEntity<Void> verifyEmail(@RequestParam("token") String token) {
         emailVerificationService.verificarEmail(token);
         return ResponseEntity.noContent().build();
     }
 
-    /**
-     * POST /auth/forgot-password - Gera token para reset de senha
-     */
     @PostMapping("/forgot-password")
-    public ResponseEntity<ForgotPasswordResponseDTO> forgotPassword(
-            @Valid @RequestBody ForgotPasswordRequestDTO dto
-    ) {
-        String token = passwordResetService.gerarTokenResetSenha(dto.getEmail());
-        return ResponseEntity.ok(new ForgotPasswordResponseDTO(token));
+    public ResponseEntity<Void> forgotPassword(
+            @Valid @RequestBody ForgotPasswordRequestDTO dto) {
+        passwordResetService.gerarTokenResetSenha(dto.getEmail());
+        return ResponseEntity.noContent().build();
     }
 
-    /**
-     * POST /auth/reset-password - Reseta a senha do usuário
-     */
     @PostMapping("/reset-password")
     public ResponseEntity<Void> resetPassword(
-            @Valid @RequestBody ResetPasswordRequestDTO dto
-    ) {
+            @Valid @RequestBody ResetPasswordRequestDTO dto) {
         passwordResetService.redefinirSenha(dto.getToken(), dto.getNovaSenha());
         return ResponseEntity.noContent().build();
     }
 }
-

@@ -13,6 +13,7 @@ import com.gastrofy.gastrofyapi.repository.InsumoRepository;
 import com.gastrofy.gastrofyapi.repository.ProdutoRepository;
 import com.gastrofy.gastrofyapi.repository.ReceitaRepository;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
@@ -32,6 +33,7 @@ public class ProdutoService {
         this.insumoRepository = insumoRepository;
     }
 
+    @Transactional
     public ProdutoResponseDTO criar(ProdutoRequestDTO dto, Usuario usuario) {
         Receita receita = receitaRepository.findByIdAndUsuarioIdUsuario(dto.getReceitaId(), usuario.getIdUsuario())
                 .orElseThrow(() -> new RecursoNaoEncontradoException("Receita", dto.getReceitaId()));
@@ -50,6 +52,7 @@ public class ProdutoService {
         return converterParaResponseDTO(salvo);
     }
 
+    @Transactional
     public List<ProdutoResponseDTO> listar(Usuario usuario) {
         return produtoRepository.findByUsuarioIdUsuario(usuario.getIdUsuario())
                 .stream()
@@ -57,12 +60,14 @@ public class ProdutoService {
                 .collect(Collectors.toList());
     }
 
+    @Transactional
     public ProdutoResponseDTO buscarPorId(Long id, Usuario usuario) {
         Produto produto = produtoRepository.findByIdAndUsuarioIdUsuario(id, usuario.getIdUsuario())
                 .orElseThrow(() -> new RecursoNaoEncontradoException("Produto", id));
         return converterParaResponseDTO(produto);
     }
 
+    @Transactional
     public ProdutoResponseDTO atualizar(Long id, ProdutoRequestDTO dto, Usuario usuario) {
         Produto produto = produtoRepository.findByIdAndUsuarioIdUsuario(id, usuario.getIdUsuario())
                 .orElseThrow(() -> new RecursoNaoEncontradoException("Produto", id));
@@ -82,12 +87,14 @@ public class ProdutoService {
         return converterParaResponseDTO(atualizado);
     }
 
+    @Transactional
     public void deletar(Long id, Usuario usuario) {
         Produto produto = produtoRepository.findByIdAndUsuarioIdUsuario(id, usuario.getIdUsuario())
                 .orElseThrow(() -> new RecursoNaoEncontradoException("Produto", id));
         produtoRepository.delete(produto);
     }
 
+    @Transactional
     public ProdutoResponseDTO produzir(Long id, BigDecimal quantidade, Usuario usuario) {
         Produto produto = produtoRepository.findByIdAndUsuarioIdUsuario(id, usuario.getIdUsuario())
                 .orElseThrow(() -> new RecursoNaoEncontradoException("Produto", id));

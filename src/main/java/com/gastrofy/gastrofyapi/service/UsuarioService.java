@@ -1,6 +1,5 @@
 package com.gastrofy.gastrofyapi.service;
 
-import com.gastrofy.gastrofyapi.dto.UsuarioCadastroResponseDTO;
 import com.gastrofy.gastrofyapi.dto.UsuarioRequestDTO;
 import com.gastrofy.gastrofyapi.dto.UsuarioResponseDTO;
 import com.gastrofy.gastrofyapi.exception.RecursoNaoEncontradoException;
@@ -19,7 +18,7 @@ public class UsuarioService {
     private final PasswordEncoder passwordEncoder;
     private final EmailVerificationService emailVerificationService;
 
-    public UsuarioCadastroResponseDTO criar(UsuarioRequestDTO dto) {
+    public UsuarioResponseDTO criar(UsuarioRequestDTO dto) {
         if (usuarioRepository.findByEmail(dto.getEmail()).isPresent()) {
             throw new RegraNegocioException("Já existe um usuário cadastrado com esse email");
         }
@@ -30,16 +29,15 @@ public class UsuarioService {
         usuario.setSenha(passwordEncoder.encode(dto.getSenha()));
 
         Usuario salvo = usuarioRepository.save(usuario);
-        String tokenVerificacao = emailVerificationService.criarTokenParaUsuario(salvo);
 
-        UsuarioResponseDTO usuarioResponse = new UsuarioResponseDTO(
+        emailVerificationService.criarTokenParaUsuario(salvo);
+
+        return new UsuarioResponseDTO(
                 salvo.getIdUsuario(),
                 salvo.getNome(),
                 salvo.getEmail(),
                 salvo.getDataCriacao()
         );
-
-        return new UsuarioCadastroResponseDTO(usuarioResponse, tokenVerificacao);
     }
 
     public UsuarioResponseDTO buscarPorId(Integer id) {

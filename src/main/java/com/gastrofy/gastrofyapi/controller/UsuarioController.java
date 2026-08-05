@@ -1,6 +1,5 @@
 package com.gastrofy.gastrofyapi.controller;
 
-import com.gastrofy.gastrofyapi.dto.UsuarioCadastroResponseDTO;
 import com.gastrofy.gastrofyapi.dto.UsuarioRequestDTO;
 import com.gastrofy.gastrofyapi.dto.UsuarioResponseDTO;
 import com.gastrofy.gastrofyapi.model.Usuario;
@@ -20,7 +19,7 @@ public class UsuarioController {
     private final UsuarioService usuarioService;
 
     @PostMapping
-    public ResponseEntity<UsuarioCadastroResponseDTO> cadastrar(
+    public ResponseEntity<UsuarioResponseDTO> cadastrar(
             @Valid @RequestBody UsuarioRequestDTO dto) {
         return ResponseEntity.ok(usuarioService.criar(dto));
     }
