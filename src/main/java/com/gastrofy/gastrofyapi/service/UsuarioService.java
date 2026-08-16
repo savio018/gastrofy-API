@@ -9,6 +9,7 @@ import com.gastrofy.gastrofyapi.repository.UsuarioRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
@@ -18,6 +19,7 @@ public class UsuarioService {
     private final PasswordEncoder passwordEncoder;
     private final EmailVerificationService emailVerificationService;
 
+    @Transactional(rollbackFor = Exception.class)
     public UsuarioResponseDTO criar(UsuarioRequestDTO dto) {
         if (usuarioRepository.findByEmail(dto.getEmail()).isPresent()) {
             throw new RegraNegocioException("Já existe um usuário cadastrado com esse email");
@@ -30,7 +32,14 @@ public class UsuarioService {
 
         Usuario salvo = usuarioRepository.save(usuario);
 
-        emailVerificationService.criarTokenParaUsuario(salvo);
+        try {
+            emailVerificationService.criarTokenParaUsuario(salvo);
+        } catch (Exception e) {
+            throw new RegraNegocioException(
+                    "Não foi possível enviar o email de verificação. " +
+                            "Verifique se o endereço de email existe e tente novamente."
+            );
+        }
 
         return new UsuarioResponseDTO(
                 salvo.getIdUsuario(),

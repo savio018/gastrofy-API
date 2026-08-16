@@ -16,6 +16,7 @@ public class AuthService {
 
     private final UsuarioRepository usuarioRepository;
     private final PasswordEncoder passwordEncoder;
+
     private final JwtService jwtService;
 
     /**
