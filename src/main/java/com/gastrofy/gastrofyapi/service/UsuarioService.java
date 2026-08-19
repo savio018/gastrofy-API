@@ -35,6 +35,11 @@ public class UsuarioService {
         try {
             emailVerificationService.criarTokenParaUsuario(salvo);
         } catch (Exception e) {
+            e.printStackTrace();
+            System.err.println("ERRO DETALHADO: " + e.getMessage());
+            if (e.getCause() != null) {
+                System.err.println("CAUSA: " + e.getCause().getMessage());
+            }
             throw new RegraNegocioException(
                     "Não foi possível enviar o email de verificação. " +
                             "Verifique se o endereço de email existe e tente novamente."
