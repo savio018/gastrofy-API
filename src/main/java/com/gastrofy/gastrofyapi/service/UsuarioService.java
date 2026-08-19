@@ -7,6 +7,8 @@ import com.gastrofy.gastrofyapi.exception.RegraNegocioException;
 import com.gastrofy.gastrofyapi.model.Usuario;
 import com.gastrofy.gastrofyapi.repository.UsuarioRepository;
 import lombok.RequiredArgsConstructor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -14,6 +16,8 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 @RequiredArgsConstructor
 public class UsuarioService {
+
+    private static final Logger logger = LoggerFactory.getLogger(UsuarioService.class);
 
     private final UsuarioRepository usuarioRepository;
     private final PasswordEncoder passwordEncoder;
@@ -35,11 +39,7 @@ public class UsuarioService {
         try {
             emailVerificationService.criarTokenParaUsuario(salvo);
         } catch (Exception e) {
-            e.printStackTrace();
-            System.err.println("ERRO DETALHADO: " + e.getMessage());
-            if (e.getCause() != null) {
-                System.err.println("CAUSA: " + e.getCause().getMessage());
-            }
+            logger.error("ERRO AO ENVIAR EMAIL: {}", e.getMessage(), e);
             throw new RegraNegocioException(
                     "Não foi possível enviar o email de verificação. " +
                             "Verifique se o endereço de email existe e tente novamente."
