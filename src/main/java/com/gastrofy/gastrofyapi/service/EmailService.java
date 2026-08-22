@@ -45,7 +45,7 @@ public class EmailService {
 
     private void enviar(String destinatario, String assunto, String corpoHtml) {
         String json = String.format(
-                "{\"from\":\"Gastrofy <onboarding@resend.dev>\",\"to\":[\"%s\"],\"subject\":\"%s\",\"html\":\"%s\"}",
+                "{\"from\":\"Gastrofy <naoresponda@usegastrofy.com>\",\"to\":[\"%s\"],\"subject\":\"%s\",\"html\":\"%s\"}",
                 destinatario, assunto, corpoHtml.replace("\"", "\\\"")
         );
 
