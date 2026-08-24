@@ -44,6 +44,9 @@ public class Produto {
     @Column(name = "margem_lucro")
     private BigDecimal margemLucro;
 
+    @Column(name = "estoque_produto")
+    private BigDecimal estoqueProduto = BigDecimal.ZERO;
+
     @JsonIgnore
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "usuario_id", nullable = false)

@@ -19,4 +19,5 @@ public class ProdutoResponseDTO {
     private BigDecimal custoTotal;
     private BigDecimal lucro;
     private BigDecimal margemLucro;
+    private BigDecimal estoqueProduto;
 }

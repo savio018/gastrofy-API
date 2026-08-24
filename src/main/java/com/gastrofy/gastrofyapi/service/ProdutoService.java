@@ -45,6 +45,7 @@ public class ProdutoService {
         produto.setQuantidadeReceita(dto.getQuantidadeReceita());
         produto.setPrecoVenda(dto.getPrecoVenda());
         produto.setUsuario(usuario);
+        produto.setEstoqueProduto(BigDecimal.ZERO);
 
         calcularCustoELucro(produto, receita);
 
@@ -115,7 +116,11 @@ public class ProdutoService {
             insumoRepository.save(insumo);
         }
 
-        return converterParaResponseDTO(produto);
+        BigDecimal estoqueAtual = produto.getEstoqueProduto() != null ? produto.getEstoqueProduto() : BigDecimal.ZERO;
+        produto.setEstoqueProduto(estoqueAtual.add(quantidade));
+
+        Produto atualizado = produtoRepository.save(produto);
+        return converterParaResponseDTO(atualizado);
     }
 
     private void calcularCustoELucro(Produto produto, Receita receita) {
@@ -149,6 +154,7 @@ public class ProdutoService {
         dto.setCustoTotal(produto.getCustoTotal());
         dto.setLucro(produto.getLucro());
         dto.setMargemLucro(produto.getMargemLucro());
+        dto.setEstoqueProduto(produto.getEstoqueProduto());
         return dto;
     }
 }

@@ -77,6 +77,28 @@ public class PedidoService {
             throw new RegraNegocioException("Apenas pedidos com status PENDENTE podem ser produzidos");
         }
 
+        // Valida se todos os produtos têm estoque suficiente ANTES de descontar qualquer um
+        for (PedidoItem item : pedido.getItens()) {
+            Produto produto = item.getProduto();
+            BigDecimal estoqueAtual = produto.getEstoqueProduto() != null ? produto.getEstoqueProduto() : BigDecimal.ZERO;
+
+            if (estoqueAtual.compareTo(item.getQuantidade()) < 0) {
+                throw new RegraNegocioException(
+                        "Estoque insuficiente do produto '" + produto.getNome() + "'. " +
+                                "Disponível: " + estoqueAtual + ", necessário: " + item.getQuantidade() + ". " +
+                                "Produza mais antes de confirmar este pedido."
+                );
+            }
+        }
+
+        // Só desconta depois que TODOS passaram na validação
+        for (PedidoItem item : pedido.getItens()) {
+            Produto produto = item.getProduto();
+            BigDecimal novoEstoque = produto.getEstoqueProduto().subtract(item.getQuantidade());
+            produto.setEstoqueProduto(novoEstoque);
+            produtoRepository.save(produto);
+        }
+
         pedido.setStatus(StatusPedido.PRODUZIDO);
         Pedido atualizado = pedidoRepository.save(pedido);
         return converterParaResponseDTO(atualizado);
