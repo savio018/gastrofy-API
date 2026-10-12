@@ -30,6 +30,13 @@ public class AuthController {
         return ResponseEntity.noContent().build();
     }
 
+    @PostMapping("/reenviar-verificacao")
+    public ResponseEntity<Void> reenviarVerificacao(
+            @Valid @RequestBody ForgotPasswordRequestDTO dto) {
+        emailVerificationService.reenviarVerificacao(dto.getEmail());
+        return ResponseEntity.noContent().build();
+    }
+
     @PostMapping("/forgot-password")
     public ResponseEntity<Void> forgotPassword(
             @Valid @RequestBody ForgotPasswordRequestDTO dto) {

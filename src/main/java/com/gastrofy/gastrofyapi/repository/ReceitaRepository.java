@@ -13,4 +13,6 @@ public interface ReceitaRepository extends JpaRepository<Receita, Long> {
     List<Receita> findByUsuarioIdUsuario(Integer usuarioId);
 
     Optional<Receita> findByIdAndUsuarioIdUsuario(Long id, Integer usuarioId);
+
+    List<Receita> findByUsuarioIdUsuarioAndNomeIgnoreCase(Integer usuarioId, String nome);
 }

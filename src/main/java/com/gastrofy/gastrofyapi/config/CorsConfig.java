@@ -18,6 +18,7 @@ public class CorsConfig {
         config.setAllowedOrigins(List.of(
                 "http://localhost:4200",
                 "http://localhost:5173",
+                "http://localhost:5174",
                 "https://gastrofy-front-end.vercel.app"
         ));
         config.setAllowedMethods(List.of("GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"));

@@ -39,6 +39,19 @@ public class EmailVerificationService {
     }
 
     @Transactional
+    public void reenviarVerificacao(String email) {
+        Usuario usuario = usuarioRepository.findByEmail(email).orElse(null);
+
+
+        if (usuario == null) return;
+
+        // Se já verificou, não faz sentido reenviar
+        if (usuario.isEmailVerificado()) return;
+
+        criarTokenParaUsuario(usuario);
+    }
+
+    @Transactional
     public void verificarEmail(String token) {
         EmailVerificationToken emailToken = tokenRepository.findByToken(token)
                 .orElseThrow(() -> new RegraNegocioException("Token de verificação inválido"));

@@ -28,8 +28,10 @@ public class ReceitaController {
     }
 
     @PostMapping
-    public ResponseEntity<ReceitaResponseDTO> criar(@Valid @RequestBody ReceitaRequestDTO dto) {
-        return ResponseEntity.ok(receitaService.criar(dto, getUsuarioAutenticado()));
+    public ResponseEntity<ReceitaResponseDTO> criar(
+            @Valid @RequestBody ReceitaRequestDTO dto,
+            @RequestParam(name = "forcarCriacao", defaultValue = "false") boolean forcarCriacao) {
+        return ResponseEntity.ok(receitaService.criar(dto, getUsuarioAutenticado(), forcarCriacao));
     }
 
     @GetMapping

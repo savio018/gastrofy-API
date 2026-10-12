@@ -17,4 +17,5 @@ public class ReceitaResponseDTO {
     private BigDecimal custoTotal;
     private BigDecimal custoPorUnidade;
     private List<ReceitaInsumoResponseDTO> insumos;
+    private String modoPreparo;
 }

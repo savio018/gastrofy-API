@@ -23,4 +23,6 @@ public class ReceitaRequestDTO {
 
     @NotNull(message = "Lista de insumos é obrigatória")
     private List<ReceitaInsumoRequestDTO> insumos;
+
+    private String modoPreparo;
 }

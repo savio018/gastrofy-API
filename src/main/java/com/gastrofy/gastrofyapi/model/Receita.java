@@ -31,6 +31,9 @@ public class Receita {
     @Column(name = "custo_total", nullable = false)
     private BigDecimal custoTotal;
 
+    @Column(name = "modo_preparo", columnDefinition = "TEXT")
+    private String modoPreparo;
+
     @JsonIgnore
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "usuario_id", nullable = false)

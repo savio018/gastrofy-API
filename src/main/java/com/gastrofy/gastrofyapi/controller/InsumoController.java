@@ -3,6 +3,7 @@ package com.gastrofy.gastrofyapi.controller;
 import com.gastrofy.gastrofyapi.dto.InsumoRequestDTO;
 import com.gastrofy.gastrofyapi.dto.InsumoResponseDTO;
 import com.gastrofy.gastrofyapi.dto.InsumoUpdateRequestDTO;
+import com.gastrofy.gastrofyapi.dto.ReporEstoqueRequestDTO;
 import com.gastrofy.gastrofyapi.model.Usuario;
 import com.gastrofy.gastrofyapi.service.InsumoService;
 import jakarta.validation.Valid;
@@ -57,10 +58,30 @@ public class InsumoController {
         return ResponseEntity.noContent().build();
     }
 
+    @DeleteMapping("/{id}/lotes/{loteId}")
+    public ResponseEntity<InsumoResponseDTO> excluirLote(
+            @PathVariable Long id,
+            @PathVariable Long loteId) {
+        return ResponseEntity.ok(insumoService.excluirLote(id, loteId, getUsuarioAutenticado()));
+    }
+
     @PatchMapping("/{id}/estoque")
     public ResponseEntity<InsumoResponseDTO> reporEstoque(
             @PathVariable Long id,
+            @Valid @RequestBody ReporEstoqueRequestDTO dto) {
+        return ResponseEntity.ok(insumoService.reporEstoque(id, dto, getUsuarioAutenticado()));
+    }
+    @PostMapping("/{id}/corrigir-estoque")
+    public ResponseEntity<InsumoResponseDTO> corrigirEstoque(
+            @PathVariable Long id,
             @RequestParam BigDecimal quantidade) {
-        return ResponseEntity.ok(insumoService.reporEstoque(id, quantidade, getUsuarioAutenticado()));
+        return ResponseEntity.ok(insumoService.corrigirEstoque(id, quantidade, getUsuarioAutenticado()));
+    }
+    @PatchMapping("/{id}/lotes/{loteId}")
+    public ResponseEntity<InsumoResponseDTO> editarLote(
+            @PathVariable Long id,
+            @PathVariable Long loteId,
+            @RequestParam BigDecimal quantidade) {
+        return ResponseEntity.ok(insumoService.editarLote(id, loteId, quantidade, getUsuarioAutenticado()));
     }
 }

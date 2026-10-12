@@ -4,7 +4,8 @@ import lombok.Getter;
 import lombok.Setter;
 
 import java.math.BigDecimal;
-import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
 
 @Getter
 @Setter
@@ -12,7 +13,6 @@ public class InsumoResponseDTO {
 
     private Long id;
     private String nome;
-    private LocalDate dataValidade;
     private BigDecimal estoqueTotal;
     private String unidadeConsumo;
     private String unidadeCompra;
@@ -21,5 +21,5 @@ public class InsumoResponseDTO {
     private BigDecimal estoqueMinimo;
     private BigDecimal estoqueCritico;
     private Integer diasAvisoValidade;
+    private List<LoteInsumoResponseDTO> lotes = new ArrayList<>();
 }
-

@@ -45,6 +45,7 @@ public class SecurityConfig {
                         .requestMatchers("/pedidos/**").authenticated()
                         .requestMatchers("/clientes/**").authenticated()
                         .requestMatchers("/alertas/**").authenticated()
+                        .requestMatchers("/embalagens/**").authenticated()
                         .anyRequest().authenticated()
                 )
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);

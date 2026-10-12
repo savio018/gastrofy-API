@@ -6,7 +6,8 @@ import lombok.Getter;
 import lombok.Setter;
 
 import java.math.BigDecimal;
-import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
 
 @Getter
 @Setter
@@ -21,12 +22,6 @@ public class Insumo {
 
     @Column(name = "nome_insumo")
     private String nome;
-
-    @Column(name = "data_validade")
-    private LocalDate dataValidade;
-
-    @Column(name = "estoque_total_consumo")
-    private BigDecimal estoqueTotal;
 
     @Column(name = "unidade_consumo")
     private String unidadeConsumo;
@@ -53,4 +48,7 @@ public class Insumo {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "usuario_id")
     private Usuario usuario;
+
+    @OneToMany(mappedBy = "insumo", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<LoteInsumo> lotes = new ArrayList<>();
 }

@@ -5,6 +5,7 @@ import com.gastrofy.gastrofyapi.dto.ReceitaInsumoResponseDTO;
 import com.gastrofy.gastrofyapi.dto.ReceitaRequestDTO;
 import com.gastrofy.gastrofyapi.dto.ReceitaResponseDTO;
 import com.gastrofy.gastrofyapi.exception.RecursoNaoEncontradoException;
+import com.gastrofy.gastrofyapi.exception.RegraNegocioException;
 import com.gastrofy.gastrofyapi.model.Insumo;
 import com.gastrofy.gastrofyapi.model.Receita;
 import com.gastrofy.gastrofyapi.model.ReceitaInsumo;
@@ -16,7 +17,9 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @Service
@@ -31,11 +34,16 @@ public class ReceitaService {
     }
 
     @Transactional
-    public ReceitaResponseDTO criar(ReceitaRequestDTO dto, Usuario usuario) {
+    public ReceitaResponseDTO criar(ReceitaRequestDTO dto, Usuario usuario, boolean forcarCriacao) {
+        if (!forcarCriacao) {
+            verificarDuplicidade(dto, usuario);
+        }
+
         Receita receita = new Receita();
         receita.setNome(dto.getNome());
         receita.setRendimento(dto.getRendimento());
         receita.setUnidadeRendimento(dto.getUnidadeRendimento());
+        receita.setModoPreparo(dto.getModoPreparo());
         receita.setUsuario(usuario);
 
         List<ReceitaInsumo> itens = montarItens(dto.getInsumos(), receita, usuario);
@@ -71,6 +79,7 @@ public class ReceitaService {
         receita.setNome(dto.getNome());
         receita.setRendimento(dto.getRendimento());
         receita.setUnidadeRendimento(dto.getUnidadeRendimento());
+        receita.setModoPreparo(dto.getModoPreparo());
 
         receita.getInsumos().clear();
         List<ReceitaInsumo> itens = montarItens(dto.getInsumos(), receita, usuario);
@@ -90,6 +99,59 @@ public class ReceitaService {
         receitaRepository.delete(receita);
     }
 
+    private void verificarDuplicidade(ReceitaRequestDTO dto, Usuario usuario) {
+        List<Receita> receitasComMesmoNome = receitaRepository
+                .findByUsuarioIdUsuarioAndNomeIgnoreCase(usuario.getIdUsuario(), dto.getNome());
+
+        if (receitasComMesmoNome.isEmpty()) {
+            return;
+        }
+
+        Map<Long, BigDecimal> ingredientesNovos = mapearIngredientes(dto.getInsumos());
+
+        for (Receita existente : receitasComMesmoNome) {
+            Map<Long, BigDecimal> ingredientesExistentes = existente.getInsumos().stream()
+                    .collect(Collectors.toMap(
+                            item -> item.getInsumo().getId(),
+                            ReceitaInsumo::getQuantidadeUtilizada
+                    ));
+
+            if (ingredientesSaoIguais(ingredientesNovos, ingredientesExistentes)) {
+                throw new RegraNegocioException(
+                        "Já existe uma receita chamada '" + existente.getNome() +
+                                "' com exatamente os mesmos ingredientes e quantidades. " +
+                                "Confirme se deseja criar mesmo assim."
+                );
+            }
+        }
+
+        throw new RegraNegocioException(
+                "Já existe uma receita chamada '" + dto.getNome() +
+                        "'. Confirme se deseja criar mesmo assim."
+        );
+    }
+
+    private boolean ingredientesSaoIguais(Map<Long, BigDecimal> a, Map<Long, BigDecimal> b) {
+        if (!a.keySet().equals(b.keySet())) {
+            return false;
+        }
+
+        for (Long insumoId : a.keySet()) {
+            if (a.get(insumoId).compareTo(b.get(insumoId)) != 0) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    private Map<Long, BigDecimal> mapearIngredientes(List<ReceitaInsumoRequestDTO> insumos) {
+        Map<Long, BigDecimal> mapa = new HashMap<>();
+        for (ReceitaInsumoRequestDTO item : insumos) {
+            mapa.put(item.getInsumoId(), item.getQuantidadeUtilizada());
+        }
+        return mapa;
+    }
     private List<ReceitaInsumo> montarItens(List<ReceitaInsumoRequestDTO> dtos, Receita receita, Usuario usuario) {
         return dtos.stream().map(dto -> {
             Insumo insumo = insumoRepository.findByIdAndUsuarioIdUsuario(dto.getInsumoId(), usuario.getIdUsuario())
@@ -104,7 +166,7 @@ public class ReceitaService {
     }
 
     private BigDecimal calcularCustoTotal(List<ReceitaInsumo> itens) {
-        return itens.stream()
+        BigDecimal total = itens.stream()
                 .map(item -> {
                     Insumo insumo = item.getInsumo();
                     BigDecimal precoPorUnidade = insumo.getPrecoUnidadeCompra()
@@ -112,6 +174,8 @@ public class ReceitaService {
                     return precoPorUnidade.multiply(item.getQuantidadeUtilizada());
                 })
                 .reduce(BigDecimal.ZERO, BigDecimal::add);
+
+        return total.setScale(2, RoundingMode.HALF_UP);
     }
 
     private ReceitaResponseDTO converterParaResponseDTO(Receita receita) {
@@ -121,6 +185,7 @@ public class ReceitaService {
         dto.setRendimento(receita.getRendimento());
         dto.setUnidadeRendimento(receita.getUnidadeRendimento());
         dto.setCustoTotal(receita.getCustoTotal());
+        dto.setModoPreparo(receita.getModoPreparo());
 
         if (receita.getRendimento() != null && receita.getRendimento().compareTo(BigDecimal.ZERO) > 0) {
             BigDecimal custoPorUnidade = receita.getCustoTotal()

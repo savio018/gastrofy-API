@@ -6,7 +6,6 @@ import lombok.Getter;
 import lombok.Setter;
 
 import java.math.BigDecimal;
-import java.time.LocalDate;
 
 @Getter
 @Setter
@@ -14,9 +13,6 @@ public class InsumoUpdateRequestDTO {
 
     @NotBlank(message = "Nome do insumo é obrigatório")
     private String nome;
-
-    @NotNull(message = "Data de validade é obrigatória")
-    private LocalDate dataValidade;
 
     @NotBlank(message = "Unidade de consumo é obrigatória")
     private String unidadeConsumo;
