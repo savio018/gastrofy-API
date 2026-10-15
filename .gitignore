@@ -34,3 +34,8 @@ src/main/resources/application.properties
 .vscode/
 
 Gastrofy_Frontend/
+
+### Skills de agentes (nao publicar) ###
+.agents/
+.claude/
+skills-lock.json
