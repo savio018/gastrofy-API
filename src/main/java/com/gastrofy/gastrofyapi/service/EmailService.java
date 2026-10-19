@@ -21,17 +21,19 @@ public class EmailService {
     private final OkHttpClient client = new OkHttpClient();
 
     public void enviarVerificacaoEmail(String destinatario, String token) {
-        String link = baseUrl + "/auth/verify-email?token=" + token;
+        enviar(destinatario, "Gastrofy - Confirme seu email", montarCorpoVerificacaoEmail(token));
+    }
 
-        String corpo = "Olá!<br><br>" +
+    String montarCorpoVerificacaoEmail(String token) {
+        String link = frontendUrl + "/confirmar-email?token=" + token;
+
+        return "Olá!<br><br>" +
                 "Obrigado por se cadastrar no Gastrofy.<br><br>" +
                 "Clique no link abaixo para confirmar seu email:<br><br>" +
-                "<a href=\"" + link + "\">" + link + "</a><br><br>" +
-                "Este link expira em 24 horas.<br><br>" +
+                "<a href=\"" + link + "\">Confirmar meu e-mail</a><br><br>" +
+                "Este link vale por 24 horas.<br><br>" +
                 "Se você não criou uma conta, ignore este email.<br><br>" +
                 "Equipe Gastrofy";
-
-        enviar(destinatario, "Gastrofy - Confirme seu email", corpo);
     }
 
     public void enviarResetSenha(String destinatario, String token) {

@@ -51,14 +51,16 @@ public class EmailVerificationService {
         criarTokenParaUsuario(usuario);
     }
 
-    @Transactional
+    // noRollbackFor: o token expirado é apagado mesmo com a exceção.
+    // Nos caminhos de erro nada além desse delete é gravado.
+    @Transactional(noRollbackFor = RegraNegocioException.class)
     public void verificarEmail(String token) {
         EmailVerificationToken emailToken = tokenRepository.findByToken(token)
                 .orElseThrow(() -> new RegraNegocioException("Token de verificação inválido"));
 
         if (emailToken.getExpirationDate().isBefore(LocalDateTime.now())) {
             tokenRepository.delete(emailToken);
-            throw new RegraNegocioException("Token de verificação expirado");
+            throw new RegraNegocioException("Token de verificação expirado. Solicite um novo link.");
         }
 
         Usuario usuario = emailToken.getUsuario();
