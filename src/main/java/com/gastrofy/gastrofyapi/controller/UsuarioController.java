@@ -2,6 +2,7 @@ package com.gastrofy.gastrofyapi.controller;
 
 import com.gastrofy.gastrofyapi.dto.UsuarioRequestDTO;
 import com.gastrofy.gastrofyapi.dto.UsuarioResponseDTO;
+import com.gastrofy.gastrofyapi.dto.UsuarioUpdateRequestDTO;
 import com.gastrofy.gastrofyapi.model.Usuario;
 import com.gastrofy.gastrofyapi.service.UsuarioService;
 import jakarta.validation.Valid;
@@ -31,7 +32,7 @@ public class UsuarioController {
 
     @PutMapping("/me")
     public ResponseEntity<UsuarioResponseDTO> atualizarPerfil(
-            @Valid @RequestBody UsuarioRequestDTO dto) {
+            @Valid @RequestBody UsuarioUpdateRequestDTO dto) {
         return ResponseEntity.ok(usuarioService.atualizar(getUsuarioAutenticado().getIdUsuario(), dto));
     }
 

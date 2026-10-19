@@ -2,6 +2,7 @@ package com.gastrofy.gastrofyapi.service;
 
 import com.gastrofy.gastrofyapi.dto.UsuarioRequestDTO;
 import com.gastrofy.gastrofyapi.dto.UsuarioResponseDTO;
+import com.gastrofy.gastrofyapi.dto.UsuarioUpdateRequestDTO;
 import com.gastrofy.gastrofyapi.exception.RecursoNaoEncontradoException;
 import com.gastrofy.gastrofyapi.exception.RegraNegocioException;
 import com.gastrofy.gastrofyapi.model.Usuario;
@@ -71,13 +72,20 @@ public class UsuarioService {
         usuarioRepository.deleteById(id);
     }
 
-    public UsuarioResponseDTO atualizar(Integer id, UsuarioRequestDTO dto) {
+    public UsuarioResponseDTO atualizar(Integer id, UsuarioUpdateRequestDTO dto) {
         Usuario usuario = usuarioRepository.findById(id)
                 .orElseThrow(() -> new RecursoNaoEncontradoException("Usuário", id));
 
         usuario.setNome(dto.getNome());
-        usuario.setEmail(dto.getEmail());
-        usuario.setSenha(passwordEncoder.encode(dto.getSenha()));
+
+        if (dto.getNovaSenha() != null) {
+            if (dto.getSenhaAtual() == null
+                    || !passwordEncoder.matches(dto.getSenhaAtual(), usuario.getSenha())) {
+                throw new RegraNegocioException("Senha atual incorreta");
+            }
+            usuario.setSenha(passwordEncoder.encode(dto.getNovaSenha()));
+        }
+
 
         Usuario atualizado = usuarioRepository.save(usuario);
         return new UsuarioResponseDTO(
