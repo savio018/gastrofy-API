@@ -1,6 +1,7 @@
 package com.gastrofy.gastrofyapi.dto;
 
 import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Positive;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -12,6 +13,7 @@ import java.time.LocalDate;
 public class LoteInsumoRequestDTO {
 
     @NotNull(message = "Quantidade é obrigatória")
+    @Positive(message = "Quantidade deve ser maior que zero")
     private BigDecimal quantidade;
 
     @NotNull(message = "Data de validade é obrigatória")

@@ -18,6 +18,7 @@ import java.util.UUID;
 public class PasswordResetService {
 
     private static final long EXPIRATION_HOURS = 1;
+    private static final long INTERVALO_MINIMO_SEGUNDOS = 60;
 
     private final PasswordResetTokenRepository tokenRepository;
     private final UsuarioRepository usuarioRepository;
@@ -30,6 +31,13 @@ public class PasswordResetService {
                 .orElse(null);
 
         if (usuario == null) return;
+
+        // Intervalo mínimo: se já existe token emitido há menos de 60s
+        // (expira daqui a mais de 59 min), não gera nem envia outro
+        LocalDateTime limiteReenvio = LocalDateTime.now()
+                .plusHours(EXPIRATION_HOURS)
+                .minusSeconds(INTERVALO_MINIMO_SEGUNDOS);
+        if (tokenRepository.existsByUsuarioAndExpirationDateAfter(usuario, limiteReenvio)) return;
 
         tokenRepository.deleteByUsuario(usuario);
 
@@ -45,20 +53,23 @@ public class PasswordResetService {
         emailService.enviarResetSenha(email, token);
     }
 
-    @Transactional
+    // noRollbackFor: o token expirado é apagado mesmo com a exceção.
+    // Nos caminhos de erro nada além desse delete é gravado.
+    @Transactional(noRollbackFor = RegraNegocioException.class)
     public void redefinirSenha(String token, String novaSenha) {
         PasswordResetToken resetToken = tokenRepository.findByToken(token)
                 .orElseThrow(() -> new RegraNegocioException("Token de redefinição inválido"));
 
         if (resetToken.getExpirationDate().isBefore(LocalDateTime.now())) {
             tokenRepository.delete(resetToken);
-            throw new RegraNegocioException("Token de redefinição expirado");
+            throw new RegraNegocioException("Token de redefinição expirado. Solicite um novo link.");
         }
 
         Usuario usuario = resetToken.getUsuario();
         usuario.setSenha(passwordEncoder.encode(novaSenha));
         usuarioRepository.save(usuario);
 
-        tokenRepository.delete(resetToken);
+        // Uso único: apaga todos os tokens de reset do usuário
+        tokenRepository.deleteByUsuario(usuario);
     }
 }

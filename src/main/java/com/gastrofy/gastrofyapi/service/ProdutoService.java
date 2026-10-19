@@ -109,6 +109,10 @@ public class ProdutoService {
         Produto produto = produtoRepository.findByIdAndUsuarioIdUsuario(id, usuario.getIdUsuario())
                 .orElseThrow(() -> new RecursoNaoEncontradoException("Produto", id));
 
+        if (quantidade.compareTo(BigDecimal.ZERO) <= 0) {
+            throw new RegraNegocioException("A quantidade a produzir deve ser maior que zero");
+        }
+
         Receita receita = produto.getReceita();
         BigDecimal totalReceita = produto.getQuantidadeReceita().multiply(quantidade);
 

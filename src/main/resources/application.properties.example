@@ -12,4 +12,7 @@ spring.jpa.open-in-view=false
 jwt.secret=sua_chave_secreta_aqui_minimo_32_caracteres
 jwt.expiration=604800000
 
+# URL do frontend (usada no link de redefinição de senha)
+app.frontend.url=http://localhost:5173
+
 spring.profiles.active=dev

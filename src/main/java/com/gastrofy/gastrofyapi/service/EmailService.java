@@ -15,6 +15,9 @@ public class EmailService {
     @Value("${app.base.url}")
     private String baseUrl;
 
+    @Value("${app.frontend.url}")
+    private String frontendUrl;
+
     private final OkHttpClient client = new OkHttpClient();
 
     public void enviarVerificacaoEmail(String destinatario, String token) {
@@ -32,15 +35,19 @@ public class EmailService {
     }
 
     public void enviarResetSenha(String destinatario, String token) {
-        String corpo = "Olá!<br><br>" +
+        enviar(destinatario, "Gastrofy - Redefinição de senha", montarCorpoResetSenha(token));
+    }
+
+    String montarCorpoResetSenha(String token) {
+        String link = frontendUrl + "/redefinir-senha?token=" + token;
+
+        return "Olá!<br><br>" +
                 "Recebemos uma solicitação para redefinir sua senha.<br><br>" +
-                "Seu token de redefinição é:<br><br>" +
-                "<strong>" + token + "</strong><br><br>" +
-                "Este token expira em 1 hora.<br><br>" +
+                "Clique no link abaixo para criar uma nova senha:<br><br>" +
+                "<a href=\"" + link + "\">Redefinir minha senha</a><br><br>" +
+                "Este link vale por 1 hora.<br><br>" +
                 "Se você não solicitou a redefinição, ignore este email.<br><br>" +
                 "Equipe Gastrofy";
-
-        enviar(destinatario, "Gastrofy - Redefinição de senha", corpo);
     }
 
     private void enviar(String destinatario, String assunto, String corpoHtml) {

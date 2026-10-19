@@ -157,6 +157,10 @@ public class InsumoService {
         Insumo insumo = insumoRepository.findByIdAndUsuarioIdUsuario(id, usuario.getIdUsuario())
                 .orElseThrow(() -> new RecursoNaoEncontradoException("Insumo", id));
 
+        if (quantidadePerdida.compareTo(BigDecimal.ZERO) <= 0) {
+            throw new RegraNegocioException("A quantidade a corrigir deve ser maior que zero");
+        }
+
         descontarEstoque(insumo, quantidadePerdida);
 
         Insumo atualizado = insumoRepository.save(insumo);
